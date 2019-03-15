@@ -1,12 +1,18 @@
 
 <h2>Body</h2>
 <ul class="parameter">
-  <li class="param-required-true">username : String
-    <br/>用户名
+  <li class="param-required-false">number : String
+    <br/>手机号码
   </li>
 </ul>
 <ul class="parameter">
-  <li class="param-required-true">password : String
-    <br/>密码
+  <li class="param-required-false">action : String
+    <br/>验证码的用途
+      <dl class="param-enum">
+        <dt>Enum:
+            <dd>login</dd>
+            <dd>password-reset</dd>
+        </dt>
+      </dl>
   </li>
 </ul>
