@@ -858,6 +858,7 @@ components:
         id:
           type: string
           description: 站点ID
+          readOnly: true
         name:
           type: string
           description: 站点名称
@@ -892,6 +893,7 @@ components:
         id:
           type: string
           description: 设施ID
+          readOnly: true
         name:
           type: string
           description: 设施名称
@@ -916,6 +918,7 @@ components:
         id:
           type: string
           description: 设备的唯一编号
+          readOnly: true
         infrastructure_id:
           type: string
           description: 设施ID
