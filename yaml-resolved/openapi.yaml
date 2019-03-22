@@ -1,0 +1,1182 @@
+openapi: 3.0.0
+info:
+  title: 智能灯Restful API文档
+  description: "## 术语\n  - 站点 地理上的一个区域，如学校、隧道、公路\n  - 设施 站点内的一个实体建筑，如配电室、井口、隧道的一段区\
+    间\n  - 设备 安装在站点内的实体设备，如主机、灯、风机、温度传感器\n  \n## HTTP方法\n  - OPTION 获取某URI支持的方法列表\n\
+    \  - GET 用于获取资源的列表或单个资源信息\n  - POST 向某种资源列表创建一个新的资源\n  - PUT 整体更新一个资源的信息，数据体中不\
+    带的属性，将会被默认值替代\n  - PATCH 部分更新一个资源的信息，数据体中不带的属性，将保持不变\n  - DELETE 删除某个资源\n\n##\
+    \ 传参方式\n  - header 携带在HTTP请求头部\n  - path URL路径中的参数，如 /sites/{siteId}/ 中的siteId是\
+    path参数。\n  - query URL中?后的参数，如 /devices/?siteId={siteId}中大括号内的siteId\n  \n## URL风\
+    格\n  API的URL遵循 /{type}/{objectId}/?para1={para1}&para2={para2} 的风格。\n  其中，type是\
+    资源的类型。\n  \n  如果访问的URL为不带objectId，而仅仅是/{type}/，则访问的对象是类型为“type”的所有对象列表。\n  \n\
+    \  而如果访问的是 /{type}/{objectId}/ 这样的URL，访问的对象是id和类型都匹配的一个具体的对象。\n  \n  ?后的查询参数主要\
+    是在进行列表访问的时候，对列表中的对象进行条件过滤。在Restful的风格中，\n  \n  查询参数不可以用于对资源进行修改。所有修改资源的动作必须通过\
+    POST、PUT、PATCH、DELETE方法来实现。\n  \n## 资源类型\n  - sites 站点\n  - infrastructures 设施\
+    \n  - devices 设备\n  - events 事件\n  - data 数据\n  - commands 命令\n  - history_commands\
+    \ 命令历史记录\n\n## 用户认证\n  本文档的API中，除了属于用户认证分组的接口外，其余所有接口都需要\n  \n  携带用户认证的Token进行\
+    访问。Token携带方法，在HTTP请求头中带上 Authorization 属性设置为：\n   \n  Bearer {token}\n  \n  获取\
+    方法如下\n  \n### 短信认证\n\n  首先，客户端通过POST用户手机号到 /sms-code/ 接口请求短信验证码。具体参数\n  \n  要求\
+    查看接口定义。\n  \n  如果一切正常，服务器返回200 OK，同时，验证码短信会在几秒钟内发送到用户的手机。\n  \n  这时需要用户在客户端填写自\
+    己收到的验证码，客户端将验证码连同手机号一起POST\n  \n  到 /sms-auth/ 接口（具体参数要求看接口定义）。\n  \n  服务器验证手机\
+    号和验证码匹配的话，就会返回用户认证Token。\n  \n### 微信小程序用户绑定\n\n  首先，客户端通过 POST 手机号到 /sms-code/\
+    \ 路径向后台申请一个短信验证码。\n  \n  如果一切正常，服务器返回200 OK，同时，验证码短信会在几秒钟内发送到用户的手机。\n\n  然后，客户\
+    端将用户的手机号、短信验证码以及用户的“access code” POST 到 \n  \n  /wechat-bind/ 路径，完成手机号和微信号的绑定。\
+    \n  \n### 微信小程序用户认证\n\n  首先，客户端通过微信API wx.login 获取用户的“access code”。\n  \n  然后，\
+    客户端POST“access code”到 /wechat-token-auth/ 来换取token。\n"
+  version: v1-oas3
+servers:
+- url: https://api.renjinggai.com:11443
+  description: 调试用灯光控制API服务
+security:
+- bearerAuth: []
+paths:
+  /sms-code/:
+    post:
+      tags:
+      - 用户认证
+      summary: 获取短信验证码
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        429:
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+  /sms-auth/:
+    post:
+      tags:
+      - 用户认证
+      summary: 短信验证码认证
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_1'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        401:
+          description: Unauthenticated
+  /wechat-bind/:
+    post:
+      tags:
+      - 用户认证
+      summary: 用户绑定微信号
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WechatBind'
+      responses:
+        200:
+          description: OK
+        401:
+          description: Unauthenticated
+  /wechat-token-auth/:
+    post:
+      tags:
+      - 用户认证
+      summary: 微信小程序获取token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_2'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokenResponse'
+        401:
+          description: |
+            Unauthorized
+
+            认证失败，如果微信客户端带对了access code，那应该是未绑定微信帐号
+  /sites/:
+    get:
+      tags:
+      - 站点
+      summary: 获取站点列表
+      parameters:
+      - name: nameContain
+        in: query
+        description: 站点名称包含的文本过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: addressContain
+        in: query
+        description: 站点地址包含的文本过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: inArea
+        in: query
+        description: 根据座标区域过滤 lngMin_latMin_lngMax_latMax
+        required: false
+        style: form
+        explode: true
+        schema:
+          pattern: ([0-9]+\.[0-9]+_){3}([0-9]+\.[0-9]+)
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+        401:
+          description: Not Authorized
+        403:
+          description: Permission Denied
+    post:
+      tags:
+      - 站点
+      summary: 新增站点
+      parameters: []
+      requestBody:
+        description: 站点信息
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Site'
+        required: true
+      responses:
+        201:
+          description: Created
+        401:
+          description: Not Authorized
+        403:
+          description: Permission Denied
+  /sites/{siteId}/:
+    get:
+      tags:
+      - 站点
+      summary: 获取单个站点信息
+      parameters:
+      - name: siteId
+        in: path
+        description: 站点的唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Site'
+    put:
+      tags:
+      - 站点
+      summary: 整体更新单个站点的信息
+      parameters:
+      - name: siteId
+        in: path
+        description: 站点的唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Site'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Site'
+    delete:
+      tags:
+      - 站点
+      summary: 删除单个站点
+      parameters:
+      - name: siteId
+        in: path
+        description: 站点的唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not Found
+        403:
+          description: Permission Denied
+    patch:
+      tags:
+      - 站点
+      summary: 局部更新单个站点的信息
+      parameters:
+      - name: siteId
+        in: path
+        description: 站点的唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Site'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Site'
+  /infrastructures/:
+    get:
+      tags:
+      - 设施
+      summary: 获取设施列表
+      parameters:
+      - name: siteId
+        in: query
+        description: 根据站点ID过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: nameContain
+        in: query
+        description: 根据设施的名称过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: addressContain
+        in: query
+        description: 根据设施的地址过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_3'
+        401:
+          description: Not Authorized
+        403:
+          description: Permission Denied
+    post:
+      tags:
+      - 设施
+      summary: 新增设施
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Infrastructure'
+      responses:
+        201:
+          description: Created
+        401:
+          description: Unauthorized
+        403:
+          description: Permission Denied
+  /infrastructures/{infrastructureId}/:
+    get:
+      tags:
+      - 设施
+      summary: 获取单个设施信息
+      parameters:
+      - name: infrastructureId
+        in: path
+        description: 设施的唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Infrastructure'
+        401:
+          description: Unauthorized
+        403:
+          description: Permission Denied
+        404:
+          description: Not Found
+    put:
+      tags:
+      - 设施
+      summary: 整体修改单个设施的信息
+      parameters:
+      - name: infrastructureId
+        in: path
+        description: 设施的唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Infrastructure'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Infrastructure'
+        401:
+          description: Unauthorized
+        403:
+          description: Permission Denied
+        404:
+          description: Not Found
+    delete:
+      tags:
+      - 设施
+      summary: 删除单个设施
+      parameters:
+      - name: infrastructureId
+        in: path
+        description: 设施的唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        204:
+          description: No Content
+        401:
+          description: Unauthorized
+        403:
+          description: Permission Denied
+        404:
+          description: Not Found
+    patch:
+      tags:
+      - 设施
+      summary: 部分修改单个设施的信息
+      parameters:
+      - name: infrastructureId
+        in: path
+        description: 设施的唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Infrastructure'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Infrastructure'
+        401:
+          description: Unauthorized
+        403:
+          description: Permission Denied
+        404:
+          description: Not Found
+  /devices/:
+    get:
+      tags:
+      - 设备
+      summary: 获取设备列表
+      parameters:
+      - name: siteId
+        in: query
+        description: 根据站点ID过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: infrastructureId
+        in: query
+        description: 根据设施ID过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_4'
+        401:
+          description: Not Authorized
+        403:
+          description: Permission Denied
+    post:
+      tags:
+      - 设备
+      summary: 创建设备对象
+      parameters: []
+      requestBody:
+        description: 蓝牙灯必要信息
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Device'
+        required: true
+      responses:
+        201:
+          description: Created
+        401:
+          description: Not Authorized
+        403:
+          description: Permission Denied
+  /devices/{deviceId}/:
+    get:
+      tags:
+      - 设备
+      summary: 获取单个设备信息
+      parameters:
+      - name: deviceId
+        in: path
+        description: 设备的唯一编号（例：CL201903090001）
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        401:
+          description: Not Authorized
+        403:
+          description: Permission Denied
+        404:
+          description: Not Found
+    put:
+      tags:
+      - 设备
+      summary: 整体更新单个设备的信息
+      parameters:
+      - name: deviceId
+        in: path
+        description: 设备的唯一编号（例：CL201903090001）
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Device'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+    delete:
+      tags:
+      - 设备
+      summary: 删除单个设备
+      parameters:
+      - name: deviceId
+        in: path
+        description: 设备的唯一编号（例：CL201903090001）
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        204:
+          description: No Content
+    patch:
+      tags:
+      - 设备
+      summary: 局部更新单个设备的信息
+      parameters:
+      - name: deviceId
+        in: path
+        description: 设备的唯一编号（例：CL201903090001）
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Device'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+  /events/:
+    get:
+      tags:
+      - 事件
+      summary: 获取事件列表
+      parameters:
+      - name: userId
+        in: query
+        description: 通过相关用户过滤事件
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: siteId
+        in: query
+        description: 通过站点ID过滤事件
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: infrastructureId
+        in: query
+        description: 通过设施ID过滤事件
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: deviceId
+        in: query
+        description: 通过设备ID过滤事件
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: event
+        in: query
+        description: 通过事件类型过滤事件
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: minTime
+        in: query
+        description: 通过最小时间过滤事件
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: maxTime
+        in: query
+        description: 通过最大时间过滤事件
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_5'
+        401:
+          description: Unauthorized
+        403:
+          description: Permission Denied
+  /data/:
+    get:
+      tags:
+      - 数据
+      summary: 获取数据列表
+      parameters:
+      - name: deviceId
+        in: query
+        description: 通过设备ID过滤数据
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: infrastructureId
+        in: query
+        description: 通过设施ID过滤数据
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: siteId
+        in: query
+        description: 通过站点ID过滤数据
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_6'
+        401:
+          description: Unauthorized
+        403:
+          description: Permission Denied
+  /commands/:
+    post:
+      tags:
+      - 命令
+      summary: 下发设备控制命令
+      requestBody:
+        description: 控制命令内容
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Command'
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Command'
+        401:
+          description: Not Authorized
+        403:
+          description: Permission Denied
+  /commands/{commandId}/:
+    delete:
+      tags:
+      - 命令
+      summary: 撤销未完成命令
+      parameters:
+      - name: commandId
+        in: path
+        description: 命令唯一ID
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        204:
+          description: No Content
+        401:
+          description: Noauthorized
+        403:
+          description: Permission Denied
+  /history_commands/:
+    get:
+      tags:
+      - 历史命令
+      summary: 获取历史命令列表
+      parameters:
+      - name: deviceId
+        in: query
+        description: 根据设备ID过滤历史命令
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: command
+        in: query
+        description: 根据命令类型过滤历史命令
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: minCreateTime
+        in: query
+        description: 根据最小创建时间过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Time'
+      - name: maxCreateTime
+        in: query
+        description: 根据最大创建时间过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Time'
+      - name: minExecuteTime
+        in: query
+        description: 根据最小执行时间过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Time'
+      - name: maxExecuteTime
+        in: query
+        description: 根据最大执行时间过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Time'
+      - name: state
+        in: query
+        description: 根据事件状态过滤
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandHistory'
+        401:
+          description: Notauthorized
+        403:
+          description: Permission Denied
+components:
+  schemas:
+    Time:
+      pattern: 2[0-9]{3}-(0[1-9]|1[012])-([012][0-9]|30|31)T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]+[0-9]{4}
+      type: string
+      description: 带时区的ISO时间格式
+    Coordinate:
+      required:
+      - latitude
+      - longitude
+      type: object
+      properties:
+        longitude:
+          type: number
+          description: 经度
+        latitude:
+          type: number
+          description: 纬度
+      description: 座标点
+    AuthTokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token
+      description: 获取Token时的返回值
+    WechatBind:
+      type: object
+      properties:
+        mobile:
+          pattern: \+?(86)?1[0-9]{10}
+          type: string
+          description: 手机号码
+        sms_code:
+          pattern: '[0-9]{6}'
+          type: string
+          description: 短信验证码
+        access_code:
+          type: string
+          description: 客户端获取的access code
+      description: 微信绑定信息
+    Site:
+      required:
+      - address
+      - coordinate_list
+      - draw_type
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          description: 站点ID
+        name:
+          type: string
+          description: 站点名称
+        coordinate_list:
+          type: array
+          description: 外围座标列表
+          items:
+            $ref: '#/components/schemas/Coordinate'
+        draw_type:
+          type: string
+          description: 地图显示类型
+          enum:
+          - line
+          - area
+        address:
+          type: string
+          description: 站点地址
+        introduction:
+          type: string
+          description: 站点简介
+        picture:
+          type: string
+          description: 站点图片URL
+      description: 站点信息
+    Infrastructure:
+      required:
+      - address
+      - coordinate
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          description: 设施ID
+        name:
+          type: string
+          description: 设施名称
+        coordinate:
+          $ref: '#/components/schemas/Coordinate'
+        site_id:
+          type: string
+          description: 设施所属的站点ID
+        picture:
+          type: string
+          description: 设施图片URL
+        address:
+          type: string
+          description: 设施的详细地址
+        introduction:
+          type: string
+          description: 设施简介
+      description: 设施信息
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 设备的唯一编号
+        infrastructure_id:
+          type: string
+          description: 设施ID
+        name:
+          type: string
+          description: 设备名称
+        coordinate:
+          $ref: '#/components/schemas/Coordinate'
+        picture:
+          type: string
+          description: 设备图片
+        product:
+          type: string
+          description: 产品（设备类型）
+        introduction:
+          type: string
+          description: 设备简介
+        imei:
+          type: string
+          description: 设备NB模组号
+        hardware_version:
+          type: string
+          description: 硬件版本
+        boot_version:
+          type: string
+          description: 启动代码版本
+        software_version:
+          type: string
+          description: 软件版本
+        control_state:
+          type: string
+          description: 控制状态
+          enum:
+          - 自主控制 开关控制 远程控制
+      description: 设备基本信息
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 事件的唯一ID
+        time:
+          type: string
+          description: 事件时间
+        coordinate:
+          $ref: '#/components/schemas/Coordinate'
+        event:
+          type: string
+          description: 事件
+        user_id:
+          type: string
+          description: 事件相关的用户
+        site_id:
+          type: string
+          description: 事件相关的站点
+        infrastructure_id:
+          type: string
+          description: 事件相关的设施
+        device_id:
+          type: string
+          description: 事件相关的设备
+      description: 事件
+    Data:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 数据的唯一ID
+        time:
+          type: string
+          description: 数据时间
+        device_id:
+          type: string
+          description: 数据对应设备的ID
+        content:
+          type: object
+          description: 数据内容，不同的设备类型数据内容可能不尽相同
+      description: 数据
+    Command:
+      required:
+      - command
+      - device_id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 命令的唯一ID
+        device_id:
+          type: string
+          description: 命令关联的设备ID
+        command:
+          type: string
+          description: 命令码
+          enum:
+          - require
+          - release
+        para:
+          $ref: '#/components/schemas/Command_para'
+      description: 命令
+    CommandHistory:
+      required:
+      - command
+      - device_id
+      type: object
+      properties:
+        id:
+          type: string
+          description: 命令的唯一ID
+        device_id:
+          type: string
+          description: 命令关联的设备ID
+        command:
+          type: string
+          description: 命令码
+          enum:
+          - require
+          - release
+        create_time:
+          type: string
+          description: 创建时间
+        execute_time:
+          type: string
+          description: 执行时间
+        state:
+          type: string
+          description: 命令状态
+          enum:
+          - waiting
+          - delivered
+          - sent
+          - success
+          - fail
+          - canceled
+        para:
+          $ref: '#/components/schemas/Command_para'
+      description: 命令
+    body:
+      required:
+      - action
+      - mobile
+      type: object
+      properties:
+        mobile:
+          type: string
+          description: 手机号码
+        action:
+          type: string
+          description: 验证码的用途
+          enum:
+          - login
+          - bind
+          - password-reset
+    inline_response_200:
+      type: object
+      properties:
+        wait_time:
+          type: integer
+          description: 下次获取的等待时间
+    body_1:
+      required:
+      - mobile
+      - sms_code
+      type: object
+      properties:
+        mobile:
+          pattern: 1\d{10}
+          type: string
+          description: 用户的手机号
+        sms_code:
+          pattern: \d{6}
+          type: string
+          description: 短信验证码
+    inline_response_200_1:
+      type: object
+      properties:
+        token:
+          type: string
+          description: 返回的用户Token
+    body_2:
+      required:
+      - access_code
+      type: object
+      properties:
+        access_code:
+          type: string
+          description: 小程序客户端用wx.login获取的code
+    inline_response_200_2:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Site'
+    inline_response_200_3:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Infrastructure'
+    inline_response_200_4:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Device'
+    inline_response_200_5:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+    inline_response_200_6:
+      type: object
+      properties:
+        count:
+          type: integer
+        next:
+          type: string
+        previous:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Data'
+    Command_para:
+      type: object
+      properties:
+        brightness:
+          maximum: 100
+          minimum: 0
+          type: integer
+      description: 附加参数
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
