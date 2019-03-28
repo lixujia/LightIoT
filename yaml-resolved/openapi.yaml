@@ -919,14 +919,17 @@ components:
           type: string
           description: 设备的唯一编号
           readOnly: true
-        infrastructure_id:
+        infrastructure:
           type: string
           description: 设施ID
         name:
           type: string
           description: 设备名称
         coordinate:
-          $ref: '#/components/schemas/Coordinate'
+          allOf:
+          - type: object
+            readOnly: true
+          - $ref: '#/components/schemas/Coordinate'
         picture:
           type: string
           description: 设备图片
@@ -939,18 +942,23 @@ components:
         imei:
           type: string
           description: 设备NB模组号
+          readOnly: true
         hardware_version:
           type: string
           description: 硬件版本
+          readOnly: true
         boot_version:
           type: string
           description: 启动代码版本
+          readOnly: true
         software_version:
           type: string
           description: 软件版本
+          readOnly: true
         control_state:
           type: string
           description: 控制状态
+          readOnly: true
           enum:
           - 自主控制 开关控制 远程控制
       description: 设备基本信息
