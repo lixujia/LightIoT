@@ -1014,9 +1014,13 @@ components:
         id:
           type: string
           description: 命令的唯一ID
-        device_id:
+          readOnly: true
+        device:
           type: string
           description: 命令关联的设备ID
+        infrastructure:
+          type: string
+          description: 命令关联的设施ID
         command:
           type: string
           description: 命令码
