@@ -733,7 +733,7 @@ paths:
           description: Noauthorized
         403:
           description: Permission Denied
-  /history_commands/:
+  /history-commands/:
     get:
       tags:
       - 历史命令
