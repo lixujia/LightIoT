@@ -917,7 +917,7 @@ components:
           description: 设施名称
         coordinate:
           $ref: '#/components/schemas/Coordinate'
-        site_id:
+        site:
           type: string
           description: 设施所属的站点ID
         picture:
