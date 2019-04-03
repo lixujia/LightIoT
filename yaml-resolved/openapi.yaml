@@ -1007,23 +1007,24 @@ components:
         time:
           type: string
           description: 事件时间
-        coordinate:
-          $ref: '#/components/schemas/Coordinate'
         event:
           type: string
           description: 事件
-        user_id:
+        user:
           type: string
           description: 事件相关的用户
-        site_id:
+        site:
           type: string
           description: 事件相关的站点
-        infrastructure_id:
+        infrastructure:
           type: string
           description: 事件相关的设施
-        device_id:
+        device:
           type: string
           description: 事件相关的设备
+        address:
+          type: string
+          description: 事件发生的地址
       description: 事件
     Data:
       type: object
