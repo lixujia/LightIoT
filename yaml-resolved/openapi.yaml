@@ -905,6 +905,13 @@ components:
           type: string
           description: 设施ID
           readOnly: true
+        infrastructure_type:
+          type: string
+          description: |
+            设施类型
+            - *classroom* 教室
+            - *tunnel* 隧道
+            - *switch_room* 配电室
         name:
           type: string
           description: 设施名称
@@ -933,6 +940,12 @@ components:
         infrastructure:
           type: string
           description: 设施ID
+        device_type:
+          type: string
+          description: |
+            设备类型
+            - *light* 灯
+            - *camera* 摄像头
         name:
           type: string
           description: 设备名称
