@@ -637,6 +637,17 @@ paths:
         explode: true
         schema:
           type: string
+      - name: ordering
+        in: query
+        description: |
+          排序方式
+          - id 以id字段进行排序
+          - -id 以id字段进行降序排序
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
       responses:
         200:
           description: OK
