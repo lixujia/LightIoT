@@ -859,6 +859,17 @@ components:
           type: string
           description: 站点ID
           readOnly: true
+        site_type:
+          type: string
+          description: |
+            站点类型
+            - *school* 学校
+            - *highway* 高速公路
+            - *community* 小区
+          enum:
+          - school
+          - highway
+          - community
         name:
           type: string
           description: 站点名称
