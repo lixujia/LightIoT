@@ -806,6 +806,18 @@ paths:
           description: Notauthorized
         403:
           description: Permission Denied
+  /light-statistic/:
+    get:
+      tags:
+      - 统计
+      summary: 获取照明统计信息
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LightStatistic'
 components:
   schemas:
     Time:
@@ -1054,6 +1066,22 @@ components:
         para:
           $ref: '#/components/schemas/Command_para'
       description: 命令
+    LightStatistic:
+      type: object
+      properties:
+        school_count:
+          type: integer
+          description: 学校数量
+        classroot_count:
+          type: integer
+          description: 教室数量
+        light_count:
+          type: integer
+          description: 灯数量
+        total_power:
+          type: number
+          description: 总功率(单位：瓦)
+      description: 照明统计
     CommandHistory:
       required:
       - command
