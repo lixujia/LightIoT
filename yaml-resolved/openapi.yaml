@@ -22,7 +22,8 @@ info:
     \ 路径向后台申请一个短信验证码。\n  \n  如果一切正常，服务器返回200 OK，同时，验证码短信会在几秒钟内发送到用户的手机。\n\n  然后，客户\
     端将用户的手机号、短信验证码以及用户的“access code” POST 到 \n  \n  /wechat-bind/ 路径，完成手机号和微信号的绑定。\
     \n  \n### 微信小程序用户认证\n\n  首先，客户端通过微信API wx.login 获取用户的“access code”。\n  \n  然后，\
-    客户端POST“access code”到 /wechat-token-auth/ 来换取token。\n"
+    客户端POST“access code”到 /wechat-token-auth/ 来换取token。\n  \n### Token说明\n  \n  系统\
+    选用[JWT](https://jwt.io/)为认证Token\n"
   version: v1-oas3
 servers:
 - url: https://api.renjinggai.com:11443
