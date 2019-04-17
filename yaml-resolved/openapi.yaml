@@ -37,8 +37,8 @@ info:
     有可能为null）\n  - *gender* 用户性别（来源于微信，有可能为null）\n"
   version: v1-oas3
 servers:
-- url: https://api.renjinggai.com:11443
-  description: 调试用灯光控制API服务
+- url: https://api.dengzhiyun.com
+  description: 教室护眼灯API服务
 security:
 - bearerAuth: []
 paths:
