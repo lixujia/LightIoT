@@ -96,7 +96,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/body_2'
+              $ref: '#/components/schemas/WechatTokenAuth'
       responses:
         200:
           description: OK
@@ -901,6 +901,16 @@ components:
         user_info:
           $ref: '#/components/schemas/WechatUserInfo'
       description: 微信绑定信息
+    WechatTokenAuth:
+      required:
+      - access_code
+      type: object
+      properties:
+        access_code:
+          type: string
+          description: 小程序客户端用wx.login获取的code
+        user_info:
+          $ref: '#/components/schemas/WechatUserInfo'
     Site:
       required:
       - address
@@ -1204,14 +1214,6 @@ components:
         token:
           type: string
           description: 返回的用户Token
-    body_2:
-      required:
-      - access_code
-      type: object
-      properties:
-        access_code:
-          type: string
-          description: 小程序客户端用wx.login获取的code
     inline_response_200_2:
       type: object
       properties:
