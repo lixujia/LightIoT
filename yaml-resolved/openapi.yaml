@@ -23,10 +23,15 @@ info:
     端将用户的手机号、短信验证码以及用户的“access code” POST 到 \n  \n  /wechat-bind/ 路径，完成手机号和微信号的绑定。\
     \n  \n### 微信小程序用户认证\n\n  首先，客户端通过微信API wx.login 获取用户的“access code”。\n  \n  然后，\
     客户端POST“access code”到 /wechat-token-auth/ 来换取token。\n  \n### Token说明\n  \n  系统\
-    选用[JWT](https://jwt.io/)为认证Token，JWT Token的结构分为3部分，以“.”\n  \n  分隔。\n  \n  第一部分\
-    为JWT的描述，包括使用的签名算法等。\n  \n  第二部分为JWT的载荷（payload），里面包含了平台定义的业务信息。在本平台中\n  \n  payload部\
-    分为用户信息。\n  \n  第三部分为JWT的签名，使用公钥可对JWT的载荷进行验签，看JWT是否为合法的。\n  \n  如果前端使用了可靠的方式获得\
-    JWT（如通过https）是可以不需要对JWT的合法性\n  \n  进行验证的。\n  \n  ```js\n  \n  ```\n"
+    选用[JWT](https://jwt.io/)为认证Token，JWT Token的结构分为3部分，以“.”分隔。\n  \n  第一部分为JWT的描述，\
+    包括使用的签名算法等。\n  \n  第二部分为JWT的载荷（payload），里面包含了平台定义的业务信息。在本平台中\n  \n  payload部分为\
+    用户信息。\n  \n  第三部分为JWT的签名，使用公钥可对JWT的载荷进行验签，看JWT是否为合法的。\n  \n  如果前端使用了可靠的方式获得JWT（\
+    如通过https）是可以不需要对JWT的合法性\n  \n  进行验证的。\n  \n  ```typescript\n  interface TokenPayload\
+    \ {\n    exp: number;\n    username: string;\n    mobile: string;\n    nick_name:\
+    \ string;\n    avatar_url: string;\n    gender: number;\n  }\n\n  function getUserInfo(jwt:\
+    \ string): TokenPayload {\n    const parts: string[] = jwt.split('.');\n    if\
+    \ (parts.length !== 3) {\n      throw Error('Wrong jwt Token');\n    }\n\n   \
+    \ return <TokenPayload>JSON.parse(atob(parts[1]));\n  }\n  ```\n"
   version: v1-oas3
 servers:
 - url: https://api.renjinggai.com:11443
