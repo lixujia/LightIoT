@@ -32,7 +32,9 @@ info:
     \  }\n\n  function getUserInfo(jwt: string): TokenPayload {\n    const parts:\
     \ string[] = jwt.split('.');\n    if (parts.length !== 3) {\n      throw Error('Wrong\
     \ jwt Token');\n    }\n\n    return <TokenPayload>JSON.parse(atob(parts[1]));\n\
-    \  }\n  ```\n"
+    \  }\n  ```\n  \n  - *exp* JWT Token过期时间UTC时间戳\n  - *username* 用户名\n  - *mobile*\
+    \ 用户手机号\n  - *nick_name* 用户昵称（来源于微信，有可能为null）\n  - *avatar_url* 用户头像URL（来源于微信，\
+    有可能为null）\n  - *gender* 用户性别（来源于微信，有可能为null）\n"
   version: v1-oas3
 servers:
 - url: https://api.renjinggai.com:11443
