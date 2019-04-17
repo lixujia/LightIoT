@@ -26,7 +26,7 @@ info:
     选用[JWT](https://jwt.io/)为认证Token，JWT Token的结构分为3部分，以“.”分隔。\n  \n  第一部分为JWT的描述，\
     包括使用的签名算法等。\n  \n  第二部分为JWT的载荷（payload），里面包含了平台定义的业务信息。在本平台中\n  \n  payload部分为\
     用户信息。\n  \n  第三部分为JWT的签名，使用公钥可对JWT的载荷进行验签，看JWT是否为合法的。\n  \n  如果前端使用了可靠的方式获得JWT（\
-    如通过https）是可以不需要对JWT的合法性\n  \n  进行验证的。\n  \n  一个从JWT Token获取用户信息的例子。\n  \n  ```typescript\n\
+    如通过https）是可以不需要对JWT的合法性\n  \n  进行验证的。\n  \n  一个从JWT Token获取用户信息的例子。\n  \n  ```ts\n\
     \  interface TokenPayload {\n    exp: number;\n    username: string;\n    mobile:\
     \ string;\n    nick_name: string;\n    avatar_url: string;\n    gender: number;\n\
     \  }\n\n  function getUserInfo(jwt: string): TokenPayload {\n    const parts:\
