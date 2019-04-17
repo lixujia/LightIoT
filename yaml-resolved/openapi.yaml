@@ -855,7 +855,36 @@ components:
           type: string
           description: Token
       description: 获取Token时的返回值
+    WechatUserInfo:
+      type: object
+      properties:
+        nickName:
+          type: string
+          description: 微信用户昵称
+        avatarUrl:
+          type: string
+          description: 微信用户头像
+        gender:
+          type: integer
+          description: 微信用户性别
+        country:
+          type: string
+          description: 微信用户国别
+        province:
+          type: string
+          description: 省
+        city:
+          type: string
+          description: 市
+        language:
+          type: string
+          description: 语言
+      description: 微信用户信息
     WechatBind:
+      required:
+      - access_code
+      - mobile
+      - sms_code
       type: object
       properties:
         mobile:
@@ -869,6 +898,8 @@ components:
         access_code:
           type: string
           description: 客户端获取的access code
+        user_info:
+          $ref: '#/components/schemas/WechatUserInfo'
       description: 微信绑定信息
     Site:
       required:
