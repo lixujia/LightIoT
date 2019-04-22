@@ -970,6 +970,15 @@ components:
           type: string
           description: 站点图片URL
       description: 站点信息
+    Classroom:
+      required:
+      - blue_tooth_check
+      type: object
+      properties:
+        blue_tooth_check:
+          type: boolean
+          description: 是否需要蓝牙确认
+      description: 教室信息
     Infrastructure:
       required:
       - address
@@ -1005,6 +1014,9 @@ components:
         introduction:
           type: string
           description: 设施简介
+        detail:
+          anyOf:
+          - $ref: '#/components/schemas/Classroom'
       description: 设施信息
     Device:
       type: object
