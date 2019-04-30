@@ -1146,6 +1146,12 @@ components:
     LightStatistic:
       type: object
       properties:
+        provinces_coverage:
+          type: integer
+          description: 覆盖省数量
+        cities_coverage:
+          type: integer
+          description: 覆盖城市数量
         school_count:
           type: integer
           description: 学校数量
@@ -1155,9 +1161,18 @@ components:
         light_count:
           type: integer
           description: 灯数量
-        total_power:
-          type: number
-          description: 总功率(单位：瓦)
+        lighting_hours_total:
+          type: integer
+          description: 累计亮灯时长
+        illuminance_average:
+          type: integer
+          description: 平均照度
+        energy_used_total:
+          type: integer
+          description: 累计用电量
+        energy_used_today:
+          type: integer
+          description: 今日用电量
       description: 照明统计
     CommandHistory:
       required:
